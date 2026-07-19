@@ -4,9 +4,9 @@
 - arXiv: `2605.19052`
 - Effective live contract: 6 anchored claims / 12 possible points
 - Owner: `codex-data-driven-lr-six-claims`
-- State: `local_gate_passed`
-- Current step: create and push the public GitHub repository
-- Next: atomically join the canonical HF backlog, then verify public readback
+- State: `publication_queued`
+- Current step: canonical backlog entry 47; shared publisher owns HF publication
+- Next: verify the public Space, tags, commit SHA, conclusion, and artifact bucket
 - Queue invariant: no backlog entry until every live claim has a substantive outcome and the complete gate passes
 
 ## Source audit
@@ -42,3 +42,6 @@ literal line and the repaired distribution are mandatory controls.
   registered local-path dataset matching the bundle size.
 - Publication gate passed at `2026-07-19T21:35:51Z`; hygiene found zero secrets,
   environment files, absolute local paths, or forbidden token signatures.
+- GitHub: `MachineLearning-Nerd/icml26-repro-OwLuqetJuB-data-driven-lagrangian-relaxation`,
+  first gate-complete push `d6b28cb`, queue-compatible manifest commit `fc65f36`.
+- Canonical HF backlog: atomically inserted as entry 47 after the GitHub push.

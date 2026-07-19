@@ -11,7 +11,7 @@
     "icml2026-repro",
     "paper-OwLuqetJuB"
   ],
-  "updated_at": "2026-07-19T21:35:47+00:00",
+  "updated_at": "2026-07-19T21:42:15+00:00",
   "root": {
     "slug": "index",
     "title": "Repro - Provably Data-driven Lagrangian Relaxation (OwLuqetJuB)",
@@ -79,6 +79,6 @@
       }
     ]
   },
-  "agent_view_tokens": 2696,
-  "revision": "1784496947794616615"
+  "agent_view_tokens": 2715,
+  "revision": "1784497335535705688"
 }

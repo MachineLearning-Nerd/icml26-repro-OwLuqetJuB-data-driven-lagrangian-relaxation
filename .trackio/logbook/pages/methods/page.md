@@ -69,7 +69,7 @@ exit 0 · 0.6s
 -->
 **📦 Artifact** `outputs/evidence_bundle.jsonl` · dataset · 3.8 MB
 
-trackio-local-path://outputs/evidence_bundle.jsonl
+https://huggingface.co/buckets/DineshAI/OwLuqetJuB-artifacts#logbook-files/outputs/evidence_bundle.jsonl
 
 
 ---

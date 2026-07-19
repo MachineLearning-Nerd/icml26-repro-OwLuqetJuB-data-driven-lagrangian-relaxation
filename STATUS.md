@@ -4,9 +4,9 @@
 - arXiv: `2605.19052`
 - Effective live contract: 6 anchored claims / 12 possible points
 - Owner: `codex-data-driven-lr-six-claims`
-- State: `publication_queued`
-- Current step: canonical backlog entry 47; shared publisher owns HF publication
-- Next: verify the public Space, tags, commit SHA, conclusion, and artifact bucket
+- State: `under_verdict`
+- Current step: public Space and artifact-bucket readback verified
+- Next: await the challenge verdict; preserve the hash-bound public evidence
 - Queue invariant: no backlog entry until every live claim has a substantive outcome and the complete gate passes
 
 ## Source audit
@@ -45,3 +45,11 @@ literal line and the repaired distribution are mandatory controls.
 - GitHub: `MachineLearning-Nerd/icml26-repro-OwLuqetJuB-data-driven-lagrangian-relaxation`,
   first gate-complete push `d6b28cb`, queue-compatible manifest commit `fc65f36`.
 - Canonical HF backlog: atomically inserted as entry 47 after the GitHub push.
+- Public Space: `https://huggingface.co/spaces/DineshAI/OwLuqetJuB`, SHA
+  `fc96ec9290ad3602f3e746bbe51190b32c0889bb`, public with both required tags.
+- Public report readback: all six claim pages and exactly one pinned
+  `FULL_GATE_READY: OwLuqetJuB` Conclusion marker.
+- Public bucket: `DineshAI/OwLuqetJuB-artifacts`, exactly one object at
+  `logbook-files/outputs/evidence_bundle.jsonl` (3,772,558 bytes). Independent
+  download SHA-256 matches the local gate:
+  `d604d98ecba61cd4da2f0df513f895c83f6fb239db309c356850636d1dc6efa0`.

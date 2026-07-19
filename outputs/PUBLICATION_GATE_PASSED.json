@@ -17,10 +17,13 @@
     "forbidden_hits": 0,
     "publishable_text_files_scanned": 29
   },
+  "paper": "OwLuqetJuB",
   "paper_id": "OwLuqetJuB",
   "passed": true,
-  "passed_at": "2026-07-19T21:35:51.793245+00:00",
+  "passed_at": "2026-07-19T21:37:54.041538+00:00",
+  "publication_gate_passed": true,
   "tests": "all passed",
+  "tests_passed": true,
   "trackio": {
     "pinned_conclusion_cells": 1,
     "registered_bundle_bytes": 3772558,

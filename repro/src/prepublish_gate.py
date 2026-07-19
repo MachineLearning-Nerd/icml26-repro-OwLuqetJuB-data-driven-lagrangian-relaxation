@@ -121,8 +121,11 @@ def main() -> None:
     live = refresh_live_claims(ROOT / "repro/configs/live_claims.json", offline=args.offline)
     hygiene = scan_hygiene(ROOT)
     manifest = {
+        "paper": "OwLuqetJuB",
         "paper_id": "OwLuqetJuB",
         "passed": True,
+        "publication_gate_passed": True,
+        "tests_passed": True,
         "passed_at": datetime.now(timezone.utc).isoformat(),
         "claims": {"verified": 6, "falsified": 0, "substantive": 6, **live},
         "bundle": bundle,

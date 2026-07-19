@@ -1,0 +1,29 @@
+{
+  "bundle": {
+    "bytes": 3772558,
+    "records": 7,
+    "sha256": "d604d98ecba61cd4da2f0df513f895c83f6fb239db309c356850636d1dc6efa0"
+  },
+  "claims": {
+    "exact_wording_match": true,
+    "falsified": 0,
+    "live_claim_count": 6,
+    "possible_points": 12,
+    "substantive": 6,
+    "verified": 6
+  },
+  "hygiene": {
+    "env_files": 0,
+    "forbidden_hits": 0,
+    "publishable_text_files_scanned": 29
+  },
+  "paper_id": "OwLuqetJuB",
+  "passed": true,
+  "passed_at": "2026-07-19T21:35:51.793245+00:00",
+  "tests": "all passed",
+  "trackio": {
+    "pinned_conclusion_cells": 1,
+    "registered_bundle_bytes": 3772558,
+    "required_pages": 10
+  }
+}

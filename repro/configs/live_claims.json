@@ -1,0 +1,13 @@
+{
+  "paper_id": "OwLuqetJuB",
+  "source": "https://huggingface.co/spaces/ICML-2026-agent-repro/challenge/resolve/main/claims_anchored.json",
+  "refreshed_at": "2026-07-20T03:17:00+05:30",
+  "claims": [
+    "For learned Lagrangian Relaxation multipliers over s coupling constraints and N training samples, the expected excess risk of the ERM solution is upper bounded by O(s^1.5/√N) (Theorem 5.5).",
+    "A minimax lower bound of Ω(s/√N) is proven, showing linear dependence on the number of coupled constraints s is unavoidable for any learning algorithm (Theorem 5.6).",
+    "Stochastic Gradient Ascent with iterate averaging is shown to achieve the matching O(s/√N) rate, closing the O(√s) gap between the ERM upper bound and the minimax lower bound and establishing minimax optimality (Theorem 5.12).",
+    "The framework is extended to learning-to-warm-start sub-gradient ascent for large-scale Mixed Integer Linear Programming, with an O(s/N) risk upper bound (Theorem 6.1) and matching Ω(s/N) minimax lower bound (Theorem 6.2).",
+    "The covering number of the dual multiplier class U is bounded as log N(δ,U,‖·‖₂,N) ≤ s·log(1+2Bπ_max s/δ), used to derive the Rademacher complexity bound R_N(U)=O(s^1.5/√N) (Lemma 5.3, Lemma 5.4).",
+    "The dual function u(π,P) is shown to be concave in π with subgradient norm bounded by 2B√s under bounded constraint-violation assumptions on the MILP instance (Proposition 5.1, Section 4)."
+  ]
+}

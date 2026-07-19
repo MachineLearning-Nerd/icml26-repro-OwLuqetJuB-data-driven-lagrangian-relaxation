@@ -1,0 +1,386 @@
+\appendix
+
+\onecolumn
+
+\section{Vehicle Routing Problem and Its Decomposition} \label{apx:vhr-decomposition}
+Consider the vehicle routing problem, where 
+\begin{itemize}
+    \item $V$ denotes the set of nodes, each of which represents a customer or the depot,  
+    \item $K$ is the set of vehicles,
+    \item $c_{ij}$ is the cost (e.g., distance) to travel from node $i$ to node $j$, where $i, j \in V$,
+    \item $d_i$ denotes the demand of customer $i$, and
+    \item $Q$ denotes the capacity of each vehicle (assume that all vehicles $k \in K$ have the same capacity).
+\end{itemize}
+The decision variables is $x \in \{0, 1\}^{\abs{V} \times \abs{V} \times \abs{K}}$, where $x_{ijk}$ equals to 1 if the vehicle $k \in K$ travels directly from node $i$ to node $j$, and 0 otherwise. Then, the vehicle routing problem is formulated as follows
+\begin{subequations}
+    \begin{align}
+    \min & \displaystyle \sum_{i\in V, j\in V, k \in K} c_{ij}x_{ijk} \notag \\
+        \mathrm{s.t.~} & x \in \{0, 1\}^{\abs{V} \times \abs{V} \times \abs{K}} \\
+        & \displaystyle \sum_{k \in K} \sum_{j \in V} x_{jik} = 1 & \forall i\in V \setminus \{0\} \label{eq:vrp-linking}\\
+        & \displaystyle \sum_{j \in V\setminus\{0\}}x_{0jk} = 1 & \forall k \in K \label{eq:vrp-preservation1}\\
+        & \displaystyle \sum_{i \in V \setminus \{0\}} x_{i0k} = 1 &\forall  k \in K \label{eq:vrp-preservation2}\\
+        & \displaystyle \sum_{j \in V} x_{jik} - \sum_{j \in V} x_{ijk} = 0 & \forall i\in V \setminus \{0\}, \forall k \in K \label{eq:vrp-flow-conservation}\\
+        & \displaystyle \sum_{i \in V \setminus \{0\}} d_i \Big(\sum_{j \in V} x_{jik}\Big) \leq Q & \forall k \in K . \label{eq:vrp-capacity-restriction}
+    \end{align}
+\end{subequations}
+Here, the constraint \eqref{eq:vrp-linking} is the linking constraint, ensuring that each customer is visited exactly once by a single vehicle. The constraints \eqref{eq:vrp-preservation1} and \eqref{eq:vrp-preservation2} ensure that every vehicle must depart from the depot and must return to the depot. The constraint \eqref{eq:vrp-flow-conservation} means that if a vehicle arrives at a customer, it must also depart from the same customer. And the final constraint \eqref{eq:vrp-capacity-restriction} implies that the total customer demand on any single vehicle's route must not exceed its capacity. We have omitted the subtour elimination constraints for each vehicle to simplify exposition. 
+
+Note that the constraint \eqref{eq:vrp-linking} is the crucial link that imposes the relation between vehicles. If we dualize such a constraint with Lagrangian multipliers, we can decompose the original complicated problems into many easier-to-solve sub-problems, each corresponding to a vehicle $k \in K$. Concretely, let $f(\boldsymbol{\pi})$, where $\pi \in \bbR^{\abs{V} - 1}$, be the objective function of the Lagrangian relaxation problem corresponding to the multiplier $\pi$, we have
+\begin{equation*}
+    \begin{aligned}
+        f(\pi) &= \sum_{i \in V, j \in V, k \in K}c_{ij} x_{ijk} + \sum_{i \in V \setminus\{0\}}\pi_i\left(\sum_{k \in K} \sum_{j\in V}x_{jik} - 1\right) \\
+        &= \sum_{k \in K}\left(\sum_{i \in V, j \in V} c_{ij} x_{ijk} + \sum_{i\in V\setminus \{0\}, j \in V} \pi_i x_{jik}\right) - \sum_{i \in V \setminus \{0\}} \pi_i.
+    \end{aligned}
+\end{equation*}
+Moreover, note that the other constraints (constraints \eqref{eq:vrp-preservation1}, \eqref{eq:vrp-preservation2}, \eqref{eq:vrp-flow-conservation}, \eqref{eq:vrp-capacity-restriction}) are defined for each vehicle $k \in K$. Therefore, given the multiplier $\pi$, we can decompose the original problems into many sub-problems $\boldsymbol{P}_k$, for $k \in K$, as follow
+\begin{equation}
+    \begin{array}{cl}
+        \min & \displaystyle \sum_{i \in V, j \in V}c_{ij} x_{ijk} + \sum_{i\in V\setminus \{0\}, j \in V}\pi_i x_{jik} \\
+        \mathrm{s.t.~} &  x_k \in \{0, 1\}^{\abs{V} \times \abs{V}} \\
+        &\displaystyle \sum_{j \in V\setminus\{0\}} x_{0jk} = 1, \quad \sum_{i \in V \setminus \{0\}} x_{i0k} = 1\\
+        & \displaystyle \sum_{j \in V} x_{jik} - \sum_{j \in V} x_{ijk} = 0 \quad \forall i\in V \setminus \{0\} \\
+        & \displaystyle \sum_{i \in V \setminus \{0\}} d_i \left(\sum_{j \in V} x_{jik}\right) \leq Q.
+    \end{array}
+    \tag{$\boldsymbol{P}_k$}
+\end{equation}
+
+\section{Additional Backgrounds} \label{apx:additional-backgrounds}
+First, we recall Talagrand's contraction inequality, which is crucial for analyzing the Rademacher complexity of a class of composite functions involving Lipschitz functions. 
+\begin{lemma}[Talagrand's contraction inequality, \citet{ledoux1991probability}] \label{lm:talagrand}
+    Let $\cU$ be a real-valued function class that take inputs from domain $\cP$, and let $S = \{P_1, \dots, P_N\} \subset \cP$ be a set of $N$ samples. Let $\phi_1, \dots, \phi_N$ be a set of $L$-Lipschitz functions (i.e., $\abs{\phi_i(a) - \phi_i(b)} \leq L \abs{a - b}$ for all $a, b \in \bbR$). Then we have 
+    \[
+        \bbE_{\sigma}\left[\sup_{u \in \cU} \frac{1}{N}\sum_{i = 1}^N \sigma_i \phi_i(u(P_i))\right] \leq L \cdot \bbE_{\sigma} \left[\sup_{u \in \cU}\frac{1}{N}\sum_{i = 1}^N \sigma_i u(P_i)\right],
+    \]
+    where $\sigma = (\sigma_1, \dots, \sigma_N)$ are i.i.d.~Rademacher random variables. 
+\end{lemma}
+
+We recall the vector Bernstein's inequality, a concentration inequality with controlled variance. 
+\begin{lemma}[Vector Bernstein's inequality, \citet{bernstein1924modification}] \label{lm:vector-bernstein}
+    Let $X_1, \dots, X_N$ be independent zero-mean random vectors in $\mathbb{R}^d$. Suppose that $\|X_i\|_2 \le M$ almost surely for all $i \in \{1, \dots, N\}$. Let $\sigma^2 = \sum_{i=1}^N \mathbb{E}[\|X_i\|_2^2]$ be the total variance. Then for any $t > 0$,$$\mathbb{P}\left( \left\| \sum_{i=1}^N X_i \right\|_2 > t \right) \le (d+1) \exp\left( \frac{-t^2}{2(\sigma^2 + Mt/3)} \right).$$
+\end{lemma}
+We then recall Popoviciu's inequality, a preliminary result that provides an upper bound for the variance of random variables with bounded support. 
+
+\begin{lemma}[Popoviciu's inequality, \citet{popoviciu1965certaines}] \label{lm:popoviciu}
+    Let $X$ be a random variable such that it is bounded by a minimum value $m$ and a maximum value $M$. Then $\textup{Var}(X) \leq \frac{(M - m)^2}{4}$.
+\end{lemma}
+
+To establish an upper bound on the generalization guarantee of data-driven learning Lagrangian multipliers, we use several tools to control the covering number and Rademacher complexity. For completeness, we provide their formal definitions and statements as follows.
+\begin{definition}[Empirical $L^2(\cP^N)$-metric, \citet{wainwright2019high}] \label{def:empirical-l2-pn-metric}
+    Let $\cU$ be a function class of which each function takes input in $\cP$. Let $S = \{P_1, \dots, P_N\} \subset \cP$ be a set of $N$ problem instances. We define the \textit{empirical $L^2(\cP^N)$-metric} on $\cU$ as 
+    \[
+        \|u - u'\|_{2, N} \coloneqq \sqrt{\frac{1}{N}\sum_{i = 1}^N (u(P_i) - u'(P_i))^2}.
+    \]
+\end{definition}
+
+\begin{definition}[Covering set and covering number, \citet{wainwright2019high}]
+    Let $(X, \|\cdot\|)$ be a metric space, and let $\Pi \subset X$ be a subset of $X$. We say that $\Pi' \subset \Pi$ is a $\delta$-covering set of $\Pi$ if for any $\pi \in \Pi$, there exists $\pi' \in \Pi'$ such that $\|\pi - \pi'\| \leq \delta$. A minimum $\delta$-covering set of $\Pi$ is the $\delta$-covering set of $\Pi$ that has the fewest elements. The $\delta$-covering number of $\Pi$, denote $\cN(\delta, \Pi, \|\cdot\|)$ is the number of elements of a minimum $\delta$-covering set. 
+\end{definition}
+
+\begin{lemma}[Dudley's entropic integral, \citet{wainwright2019high}] \label{lm:dudley} Let $D = \sup_{u}\|u\|_{2, N}$, we have
+    \[
+    \hat{\mathscr{R}}_N(\cU) \leq \inf_{\delta_0 > 0} \delta_0 + \int_{\delta_0}^{D} \sqrt{\frac{\log \cN(\delta, \cU, \|\cdot\|_{2, N})}{N}} \mathrm{d}\delta.
+    \]
+\end{lemma}
+
+
+\section{Proofs for Section \ref{sec:standard-lagrangian-relaxation}} \label{apx:standard-lagrangian-relaxation}
+
+In this section, we present a detailed proof of the minimax lower bound for the data-driven learning Lagrangian relaxation problem.
+
+\subsection{Additional Backgrounds}
+
+
+First, we recall a classical result for constructing the packing set for an $s$-dimensional hypercube.
+
+\begin{lemma}[Varshamov-Gilbert, Lemma 2.9, \cite{tsybakov2008nonparametric}] \label{lm:Varshamov-Gilbert-bound}
+    Let $s \geq 8$. There exists a subset $\mathcal{M} = \{v^{(1)}, \dots, v^{(M)}\} \subset \{0, 1\}^s$ such that:
+    \begin{itemize}
+        \item $M \geq 2^{s / 8}$.
+        \item $v^{(1)} = (0, \dots, 0) \in \{0, 1\}^s$.
+        \item For any distinct pair $v^{(i)}, v^{(j)} \in \mathcal{M}$, the Hamming distance $d_H(v^{(i)}, v^{(j)}) \geq \frac{s}{8}$,
+        \item Consequently, the $\ell_1$ distance between any distinct pair satisfies $\|v^{(i)} - v^{(j)}\|_1 \geq \frac{s}{8}$.
+    \end{itemize}
+\end{lemma}
+
+\subsection{Proof of the Geometric Properties} \label{sec:app-geometric}
+
+
+\proof[Proof of Proposition~\ref{prop:geometric-property}]
+    We first prove the concavity property. Recall that for $P = (c, A, b, C, d)$, the optimal value of the corresponding Lagrangian relaxation $u(\pi, P)$ is defined as
+    \[
+        u(\pi, P) = \ \min_{x \in \cX} L(\pi, x),
+    \]
+    where $L(\pi, x) = c^\top x + \pi^\top (b - Ax)$ is the Lagrangian function 
+    and $\cX = \{x \in \bbR^m_+ \times \{0, 1\}^p \mid Cx \geq d\}$. Note that $L(\pi, x)$ is an affine function of $\pi$ and therefore also concave in $\pi$. This means that $u(\pi, P)$ is the point-wise minimum of concave functions of $\pi$, hence it is also concave. 
+    
+    Next, we prove that $g(\pi, P) = b - Ax^*(\pi, P)$ is a valid subgradient of $u(\pi, P)$. First, note that $u(\cdot, P)$ is a concave function of $\pi$. Therefore, a vector $g$ is a valid subgradient of $u$ at $\pi$ if for any multiplier $\pi' \in \bbR^s_+$, we have
+    \[
+        u(\pi', P) \leq u(\pi, P) + g^\top (\pi' - \pi). 
+    \]
+    Now let $x^*(\pi, P)$ be the optimal solution that achieves the minimum for $u(\pi, P)$. By definition, we have $u(\pi, P) = c^\top x^*(\pi, P) + \pi^\top (b - Ax^*(\pi, P))$. Now, consider any $\pi' \in \bbR^s_+$, by the definition of $u(\pi', P)$, we have
+    \begin{equation*}
+        \begin{aligned}
+            u(\pi', P) &= \min_{x \in \mathcal X} ~c^\top x + (\pi')^\top (b - Ax) \\
+            &\leq c^\top x^*(\pi, P) + (\pi')^\top (b - Ax^*(\pi, P)) \\
+            &= \left[c^\top x^*(\pi, P) + \pi^\top (b - Ax^*(\pi, P))\right]  + (\pi' - \pi)^\top (b - Ax^*(x, P)) \\
+            &= u(\pi, P) + g(\pi, P)^\top (\pi' - \pi).
+        \end{aligned}
+    \end{equation*}
+    This means that given a problem instance $P$, $g(\pi, P) = b - Ax^*(\pi, P)$ is a valid sub-gradient of $u(\pi, P)$ for any $\pi \in \bbR^s_+$. Finally, from Assumption~\ref{asmp:bounded-constaint-violation}, we have 
+    \begin{equation*}
+            \|g(\pi, P)\|_2 = \|b - Ax^*(\pi, P)\|_2 \leq \|b\|_2 + \|Ax^*(\pi, P)\|_2 \leq 2B\sqrt{s}.
+    \end{equation*}
+    The proof is complete.
+\qed
+
+\subsection{Minimax Lower-bound for Data-driven Learning Lagrangian Relaxation} \label{sec:app-minimax}
+
+We now present the detailed proof of the minimax lower bound for the data-driven learning Lagrangian relaxation problem. 
+
+\proof[Proof of Theorem~\ref{thm:minimax-lower-bound}]
+    We break down the proof into the following steps. 
+        
+    \textbf{Step 1 - Restricting the problem space:} First, throughout this construction, we consider the problem instance $P$  which is strictly in the form $P = (c, \mathbf{I}_s, \frac{1}{2}\cdot \mathbf{1}_s, 0_{t \times s}, 0_t)$ representing the ILP problem
+    \[
+        \min_{x \in \{0, 1\}^s} c^\top x \quad \textup{s.t.} \quad x_k \geq \frac{1}{2} \quad \forall k = 1, \dots, s.
+    \]
+     Here, $(C, d) = (0_{t \times s}, 0_t)$ means all constraints are hard constraints, i.e., they will all be dualized in the Lagrangian relaxation problem. Besides, the problem instance $P$ is solely determined by the objective vector $c$, meaning that we can equate the problem distribution $\cD$ for $P$ as a distribution for $c$. Besides, for any $\pi \in \bbR^s_+$, we have
+     \begin{equation*}
+         \begin{aligned}
+             u(\pi, P) &= \min_{x \in \{0, 1\}^s} c^\top x + \pi^\top (\frac{1}{2}\cdot \mathbf{1}_s - x)  = \frac{1}{2}\pi^\top \mathbf{1}_s + \min_{x \in \{0, 1\}^s}(c - \pi)^\top x  \\
+            &= \frac{1}{2}\pi^\top \mathbf{1}_s + \sum_{k = 1}^s \min(0, c_k - \pi_k) = \sum_{k = 1}^s \min \left(\frac{1}{2}\pi_k, c_k - \frac{\pi_k}{2} \right).
+         \end{aligned}
+     \end{equation*}
+
+    \textbf{Step 2 - Defining problem distribution:} Let $\mu > 0$ be a based constant and $\sigma > 0$ be a scale parameter, where $\mu+\sigma < \pi_{\max}$. For a fixed vector $v \in \{0, 1\}^s$, we define the problem distribution $\cD_v$ over $c$ as follow:
+    \begin{itemize}
+        \item Support: $c_k$ takes value in $\{\mu, \mu + \sigma\}$ for any $k = 1, \dots, s$,
+        \item Probabilities: 
+        \begin{itemize}
+            \item If $v_k = 1$, then $\bbP(c_k = \mu + \sigma) = \frac{1 + \epsilon}{2} = p_k$, and $\bbP(c_k = \mu) = \frac{1 - \epsilon}{2} = 1 - p_k$, 
+            \item If $v_k = 0$, then $\bbP(c_k = \mu + \sigma) = \frac{1 - \epsilon}{2} = p_k$, and $\bbP(c_k = \mu) = \frac{1 + \epsilon}{2} = 1 - p_k$.
+        \end{itemize}
+    \end{itemize}
+    Here, $\epsilon > 0$ is a tunable parameter. Note that with the problem distribution $\cD_v$, the optimal Lagrangian relaxation $\pi^*(\cD_v)$ is
+    \begin{equation*}
+        \begin{aligned}
+            \pi^*(\cD_v) = \arg \max_{\pi \in \Pi} \bbE_{c \sim \cD_v} \Big[\sum_{k = 1}^s \min\left(\frac{1}{2}\pi_k, c_k - \frac{\pi_k}{2}\right) \Big].
+        \end{aligned}
+    \end{equation*}
+    Note that this optimization problem can be decomposed into $s$ sub-problems, i.e., $(\pi^*(\cD_v))_k$ can be defined as
+    \begin{equation*}
+        \begin{aligned}
+            (\pi^*(\cD_v))_k &= \arg \max_{\pi_k} \left\{ \mathcal J_k(\pi_k) \triangleq \bbE_{c_k \sim \cD_{v_k}} \Big[ \min\left(\frac{1}{2}\pi_k, c_k - \frac{\pi_k}{2}\right)\Big] \right\}
+        \end{aligned}
+    \end{equation*}
+    We then have the following cases
+    \begin{itemize}
+        \item Case 1: $v_k = 1$, then $p_k > \frac{1}{2}$. We have
+        \begin{equation*}
+            \begin{aligned}
+                \mathcal J_k(\pi_k) &= p_k \cdot\min\left(\frac{1}{2}\pi_k, \mu + \sigma - \frac{\pi_k}{2}\right) + (1 - p_k)\cdot \min\left(\frac{1}{2}\pi_k, \mu - \frac{\pi_k}{2}\right),
+            \end{aligned}
+        \end{equation*}
+        and we consider the following cases:
+        \begin{itemize}
+            \item Case 1.1: $\pi_k < \mu$, then $\mathcal J_k(\pi_k) = \frac{\pi_k}{2}$ and $\frac{\partial \mathcal J_k}{\partial \pi_k} = \frac{1}{2}$. This means $\mathcal J_k$ is increasing over $[0, \mu]$.
+            \item Case 1.2: $\pi_k > \mu + \sigma$, then $\mathcal J_k(\pi_k) = p_k\left(\mu + \sigma - \frac{\pi_k}{2}\right) + (1 - p_k)\left(\mu -  \frac{\pi_k}{2}\right)$, and $\frac{\partial \mathcal J_k}{\partial \pi_k} = -\frac{1}{2}$. This means $\mathcal J_k$ is decreasing over $[\mu + \sigma, \infty)$.
+            \item Case 1.3: $\pi_k \in [\mu, \mu + \sigma]$, then $\mathcal J_k(\pi_k) = p_k\cdot \frac{\pi_k}{2} + (1 - p_k)(\mu - \frac{\pi_k}{2})$ and $\frac{\partial \mathcal J_k}{\partial \pi_k} = p_k - \frac{1}{2}$. Since $p_k > \frac{1}{2}$, this means $\mathcal J_k$ is increasing over $[\mu, \mu + \sigma]$.
+        \end{itemize}
+        Therefore, $\mathcal J_k$ attains its maxima at $\pi_k = \mu + \sigma$, i.e., $(\pi^*(\cD_v))_k = \mu + \sigma$.
+
+        \item Case 2: $v_k = 0$, then $p_k < \frac{1}{2}$. Using the same idea as the previous case, we have $(\pi^*(\cD_v))_k = \mu$.
+    \end{itemize}
+    Then, we conclude that 
+    \begin{equation*}
+        \begin{aligned}
+            \pi^*(\cD_v) &= \arg\max_{\pi \in \Pi}\bbE_{c \sim \cD_v} \sum_{k = 1}^s \min\left(\frac{1}{2}\pi_k, c_k - \frac{\pi_k}{2}\right) = \mu \mathbf{1}_s + \sigma v.
+        \end{aligned}
+    \end{equation*}
+
+    \textbf{Step 3 - Defining a family of hard problem distributions}: Let $\{0, 1\}^s$ be an $s$-dimensional hypercube. From Lemma \ref{lm:Varshamov-Gilbert-bound}, there exists a subset $\cV = \{v^{(1)}, \dots, v^{(M)}\} \subset \{0, 1\}^s$ such that $M \geq 2^{s/8}$ and $\|v^{(i)} - v^{(j)}\|_1 \geq \frac{s}{8}$. This means that for any distinct $v^{(i)}, v^{(j)} \in \cV$, we have
+    \begin{equation*}
+        \begin{aligned}
+            \|\pi^*(\cD_{v^{(i)}}) - \pi^*(\cD_{v^{(j)}})\|_1 &= \|\mu \mathbf{1}_s + \sigma v^{(i)} - \mu \mathbf{1}_s - \sigma v^{(j)}\|_1 = \sigma \|v^{(i)} - v^{(j)} \|_1 \geq \frac{\sigma s}{8}.
+        \end{aligned}
+    \end{equation*}
+    This means that the set $\{\pi^*(\cD_{v^{(1)}}), \dots, \pi^*(\cD_{v^{(M)}})\}$ is a $\frac{\sigma s}{16}$-packing set of $\Pi$. Besides, the set $\cV$ defines a family of hard problem distribution $\{\cD_{v^{(1)}}, \dots, \cD_{v^{(M)}}\}$, and the minimax risk is lower-bounded by
+    \begin{equation*}
+        \begin{aligned}
+            &\inf_{\pi}\sup_{\cD \in \Delta(\mathcal{P})} \bbE_{S \sim \cD^N}[U(\pi^*(\cD), \cD) - U(\pi(S), \cD)] 
+            \geq &\inf_{\pi} \sup_{v \in \cV} \bbE_{S \sim \cD_v^N}[U(\pi^*(\cD_v), \cD_v) - U(\pi(S), \cD_v)].
+        \end{aligned}
+    \end{equation*}
+
+
+    \textbf{Step 4 - Linking the risk with the distance in the parameter space}: We now show that for any $\pi_k$, we have
+    \[
+        \mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J_k(\pi_k) \geq \frac{\epsilon}{2}\abs{(\pi^*(\cD_v))_k - \pi_k}.
+    \]
+    If $v_k = 1$, we consider the following case:
+    \begin{itemize}
+        \item If $\pi_k < \mu$: We have
+        \begin{equation*}
+            \begin{aligned}
+                \mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J_k(\pi_k) 
+                = & \mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J_k(\mu) + \mathcal J_k(\mu) - \mathcal J_k(\pi_k) \\
+                = &\frac{\epsilon}{2}((\pi^*(\cD_v))_k - \mu) + \frac{1}{2}(\mu - \pi_k) \\
+                \geq &\frac{\epsilon}{2}((\pi^*(\cD_v))_k - \mu) + \frac{\epsilon}{2}(\mu - \pi_k) = \frac{\epsilon}{2}\left((\pi^*(\cD_v))_k - \pi_k\right).
+            \end{aligned}
+        \end{equation*}
+        \item If $\pi_k > \mu + \sigma$: We have
+        \begin{equation*}
+            \begin{aligned}
+                \mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J_k(\pi_k)
+                = &p_k\cdot \frac{\mu + \sigma}{2} + (1 - p_k)\left(\mu - \frac{\mu + \sigma}{2}\right) 
+                - p_k\left(\mu + \sigma - \frac{\pi_k}{2}\right) - (1 - p_k)\left(\mu - \frac{\pi_k}{2}\right) \\
+                = &p_k\left(- \frac{\mu + \sigma}{2} + \frac{\pi_k}{2}\right) + (1 - p_k) \left(\frac{\pi_k}{2} - \frac{\mu + \sigma}{2}\right) \\
+                = &\frac{\pi_k}{2} - \frac{\mu + \sigma}{2} \\
+                = &\frac{1}{2}(\pi_k - (\pi^*(\cD_v))_k) \qquad  \qquad
+                 (\textup{as } (\pi^*(\cD_v))_k = \mu + \sigma) \\
+                \geq &\frac{\epsilon}{2}(\pi_k - (\pi^*(\cD_v))_k) \qquad  \qquad (\textup{as $\epsilon$ is small}).
+            \end{aligned}
+        \end{equation*}
+        \item If $\pi_k \in [\mu, \mu + \sigma]$: From the above, in such a case, we have $\frac{\partial \mathcal J_k}{\partial \pi_k} = p_k - \frac{1}{2} = \frac{\epsilon}{2}$ for any $\pi_k \in [\mu, \sigma]$. And since $\mathcal J_k$ is linear over $[\mu, \mu + \sigma]$ and $(\pi^*(\cD_v))_k = \mu + \sigma$, we claim that $\mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J(\pi_k) = \frac{\epsilon}{2}\abs{(\pi^*(\cD_v))_k - \pi_k}$.
+    \end{itemize}
+    Therefore, if $v_k = 1$, we can claim that $\mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J_k(\pi_k) \geq \frac{\epsilon}{2}\abs{(\pi^*(\cD_v))_k - \pi_k}$. Using an analogous argument, we can claim that for $v_k = 0$, we also have $\mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J_k(\pi_k) \geq \frac{\epsilon}{2}\abs{(\pi^*(\cD_v))_k - \pi_k}$. Take the sum across the index $k = 1, \dots, s$, and note that $P$ is determined by only the objective vector $c$ (hence we can write $c \sim \cD_v$ instead of $P \sim \cD_v$), we have
+    \begin{equation*}
+        \begin{aligned}
+        U(\pi^*(\cD_v), \cD_v) - U(\hat{\pi}, \cD_v)
+            = &\bbE_{c \sim \cD_v}\left[u(\pi^*(\cD_v)) - u(\pi, P)\right] \\
+            = &\sum_{k = 1}^s \bbE_{c \sim \cD_v} [\mathcal J_k((\pi^*(\cD_v))_k) - \mathcal J_k(\pi_k)] \ge \frac{\epsilon}{2}\|(\pi^*(\cD_v) - \pi\|_1.
+        \end{aligned}
+    \end{equation*}
+    Combining with the claim from Step 3, we have
+    \begin{equation*}
+        \begin{aligned}
+            \inf_{\pi}\sup_{\cD \in \Delta(\mathcal{P})} \bbE_{S \sim \cD^N}[U(\pi^*(\cD), \cD) - U(\pi(S), \cD)]
+            \geq \frac{\epsilon}{2}\inf_{\pi} \sup_{v \in \cV} \bbE_{S \sim \cD_v^N}\|\pi^*(\cD_v) - \pi(S)\|_1.
+        \end{aligned}
+    \end{equation*}
+    
+    \textbf{Step 5: Applying Fano's method (Theorem \ref{thm:fano}):} We now use Fano's method to give a lower bound for the LHS above. We have 
+    \begin{itemize}
+        \item From Lemma \ref{lm:Varshamov-Gilbert-bound}, the log cardinality of the packing set $\mathcal V$ is lower-bounded by $\log M \geq \frac{s}{8}\log 2$.
+        \item \textit{Mutual information upper-bound}: In our construction, the coordinate of objective vector $c$ are independent, the KL divergence sums over $s$ dimensions. For any distinct $v^{(i)}, v^{(j)} \in \mathcal V$, the KL divergence between $\cD_{v^{(i)}}$ and $\cD_{v^{(j)}}$ is upper-bounded by the sum of $s$ Bernoulli KL divergences. {For small $\epsilon \in (0, 1/2)$, using standard $\chi^2$-upper bound for KL divergence, we have $\textup{KL}(\textup{Ber}(\frac{1 + \epsilon}{2}) \| \textup{Ber}(\frac{1 - \epsilon}{2})) \leq \chi^2(P \| Q) =  \frac{4\epsilon^2}{1 - \epsilon^2} = \cO(\epsilon^2)$ using $\chi^2$-upper bound.} Therefore, we have $I(J; S) \leq N \max_{i, j} \textup{KL}(\cD_{v^{(i)}} \| \cD_{v^{(j)}}) \leq  N s (4\epsilon^2)$.
+    \end{itemize}
+    
+    To make Fano's inequality valid, we need to choose $\epsilon$ such that
+    \[
+        \frac{4Ns \epsilon^2 + \log 2}{\frac{s}{8}\log 2} \leq \frac{1}{2} \Leftrightarrow 4Ns\epsilon^2 \leq (\frac{s}{16} - 1)\log 2.
+    \]
+    We simply choose $\epsilon \asymp \frac{1}{\sqrt{N}}$. Combining with the claim from Steps 3, 4, and applying Theorem~\ref{thm:fano}, we have
+    \begin{equation*}
+        \begin{aligned}
+            \inf_{\pi}\sup_{\cD \in \Delta(\mathcal{P})} \bbE_{S \sim \cD^N}[U(\pi^*(\cD), \cD) - U(\pi(S), \cD)]
+            \geq &\frac{\epsilon}{2}\inf_{\pi} \sup_{v \in \cV} \bbE_{S \sim \cD_v^N}\|\pi^*(\cD_v) - \pi(S)\|_1 = \Omega \left(\frac{1}{\sqrt{N}} \cdot \sigma s\right),
+        \end{aligned}
+    \end{equation*}
+    which concludes the proof.
+\qed
+
+\subsection{Minimax Optimality via Stochastic Gradient Ascent} \label{apx:SGA}
+In this section, we will present the formal proof for Theorem \ref{thm:minimax-SGA}.
+
+\begin{customthm}{\ref{thm:minimax-SGA} (restated)}
+    If the SGA algorithm (Algorithm \ref{alg:sGA}) is run for $N$ iterations with a constant step size $\eta = \frac{\pi_{\max}}{2B\sqrt{N}}$, the expected excess risk of the learned (averaged) Lagrangian multipliers $\bar{\pi}_N$ is upper-bounded by
+    \[
+        \bbE_{S \sim \cD^N}[\mathcal{E}(\bar{\pi}_N)] \leq \frac{2B\pi_{\max} s}{\sqrt{N}} = \cO\left(\frac{s}{\sqrt{N}}\right).
+    \]
+\end{customthm}
+\proof[Proof of Theorem~\ref{thm:minimax-SGA}]
+    Let $U(\pi) = \bbE_{P \sim \cD}[u(\pi, P)]$ denote the expected utility function corresponding to Lagrangian variables $\pi$. Since $u(\cdot, P)$ is concave for any problem instance $P$, $U(\pi)$ is also concave. Besides, recall that $\pi^*(\cD) \in \arg \max_{\pi \in \Pi} U(\pi)$ is the optimal Lagrangian variable  corresponding to the problem distribution $\cD$.
+
+    From the property of the projection operator onto a convex set $\Pi$, for any $t  \in \{1, \dots, N\}$, we have
+    \begin{equation} \label{eq:descent-lemma}
+        \begin{aligned}
+            &\|\pi_{t + 1} - \pi^*(\cD)\|_2^2 \leq \|\pi_{t} + \eta g_t - \pi^*(\cD)\|_2^2 = \|\pi_t - \pi^*(\cD)\|_2^2 + 2\eta g_t^\top (\pi_t - \pi^*(\cD)) +\eta^2 \|g_t\|_2^2 \\
+            \Rightarrow & \quad g_t^\top (\pi^*(\cD) - \pi_t) \leq \frac{\|\pi_t - \pi^*(\cD)\|_2^2 - \|\pi_{t + 1} - \pi^*(\cD)\|_2^2}{2\eta} + \frac{\eta}{2} \|g_t\|_2^2.
+        \end{aligned}
+    \end{equation}
+    Note that $u(\cdot, P_t)$ is a concave function, therefore $u(\pi^*(\cD), P_t) - u(\pi_t, P_t) \leq g^\top_t (\pi^*(\cD) - \pi_t)$. Note that $\pi_t$ is constructed using only the historical instances $\{P_1, \dots, P_{t - 1}\}$, hence is independent with $P_{t}$. Therefore, if we take the expectation over all problem instances $P_1, \dots, P_N \sim \cD$, then $\bbE_{P_1,\dots, P_N}[u(\pi_t, P)] = \bbE_{P_1,\dots, P_N}[U(\pi_t)]$, and $\bbE_{P_1,\dots, P_N}[u(\pi^*(\cD), P)] = U(\pi^*)$ since $\pi^*$ is deterministic. Combining the above with Equation \ref{eq:descent-lemma}, we have
+    \begin{equation*}
+        \bbE_{P_1,\dots, P_N}[U(\pi^*) - U(\pi_t)] \leq \bbE_{P_1,\dots, P_N}\left[\frac{\|\pi_t - \pi^*(\cD)\|_2^2 - \|\pi_{t+ 1} - \pi^*(\cD)\|_2^2}{2\eta} + \frac{\eta}{2}\|g_t\|_2^2\right].
+    \end{equation*}
+    Taking the sum over $N$ time steps, we have
+    \begin{equation*}
+        \begin{aligned}
+            \bbE_{P_1,\dots, P_N}\left[N U(\pi^*) - \sum_{t = 1}^N U(\pi_t)\right] &\leq  \bbE_{P_1,\dots, P_N} \left[\frac{\|\pi_1 - \pi^*(\cD)\|_2^2 - \|\pi_{N + 1} - \pi^*(\cD)\|_2^2}{2\eta} + \frac{\eta}{2}\sum_{t = 1}^N \|g_t\|_2^2\right] \\
+            &\leq  \frac{\|\pi_1 - \pi^*(\cD)\|_2^2}{2\eta} + \bbE_{P_1,\dots, P_N}\left[\sum_{t = 1}^N \|g_t\|_2^2\right],
+        \end{aligned}
+    \end{equation*}
+    where we use the fact that $\pi_1$ is fixed, so $\bbE_{P_1,\dots, P_N}\|\pi_1 - \pi^*(\cD)\|_2^2 = \|\pi_1 - \pi^*(\cD)\|_2^2$. Now note that $\|g_t\|_2 \leq 2B\sqrt{s}$, and $\|\pi_1 - \pi^*(\cD)\|_2^2 \leq s\pi_{\max}^2$, we have
+    \[
+        \bbE_{P_1,\dots, P_N}\left[U(\pi^*) - \sum_{t = 1}^N U(\pi_t)\right] \leq \frac{s\pi_{\max}^2}{2\eta} + 2\eta NB^2s.
+    \]
+    Now, since $U(\cdot)$ is a concave function, using Jensen's inequality, we have $\frac{1}{N}\sum_{t = 1}^N U(\pi_t) \leq U\left(\frac{1}{N}\sum_{t =1}^N \pi_t\right) = U(\overline{\pi}_N)$, and therefore
+    \[
+       N \bbE[\cE(\bar{\pi}_N)] =  N \bbE_{P_1, \dots, P_N}[U(\pi^*(\cD)) - U(\bar{\pi}_N)] \leq \frac{s\pi_{\max}^2}{2\eta} + 2\eta NB^2s.
+    \]
+    Choosing $\eta = \frac{\pi_{\max}}{2B\sqrt{N}}$, we have the final conclusion. 
+\qed
+
+\section{Proofs for Section \ref{sec:warm-start-lagrangian-relaxation}} \label{apx:warm-start-lagrangian-relaxation}
+\subsection{Upper Bound} \label{apx:upper-bound-warm-start}
+We now present the detailed proof for the generalization guarantee upper-bound for the problem of learning to warm-start Lagrangian relaxation. 
+
+\proof[Proof of Theorem~\ref{thm:upper-bound-warm-start}]
+    The proof simply relies on the closed-form solution of the ERM estimator for the squared loss. First, given an initialization $\phi \in \Pi$, the risk $R(\phi) = \bbE_{P \sim \cD}[\|\phi - \pi^*(P)\|_2^2]$. Therefore, given a problem distribution $\cD$, the optimal initialization $\phi^*(\cD)$ corresponding to $\cD$ is simply $\phi^*(\cD) = \bbE_{P \sim \cD}[\pi^*(P)]$. Therefore, the excessive can be written as 
+    \[
+        \bbE_{P \sim \cD}[\|\hat{\phi}(S) - \pi^*(P)\|_2^2] - \bbE_{P \sim \cD}[\|\pi^*(\cD) - \pi^*(P)\|] = \|\hat{\phi}(S) - \phi^*\|_2^2.
+    \]
+    Let $Z_i = \pi^*(P_i)$, and from Assumption \ref{asmp:restricted-search-main}, the $s$-dimensional random vector $Z_i$ are i.i.d.~with mean $\phi^*(\cD)$ and belongs to the bounded domain $Z_i \in [0, \pi_\textup{max}]^s$ due to Assumption \ref{asmp:restricted-search-main}. { Therefore, applying the standard Popoviciu's inequality on variance (Lemma \ref{lm:popoviciu}), we have}
+    \[
+        \bbE_{P \sim \cD} = \frac{1}{N}\sum_{i = 1}^N \sum_{k = 1}^s \textup{Var}(Z_{i, k})\leq \frac{s \pi^2_\textup{max}}{4N} = \cO\left(\frac{s}{N}\right),
+    \]
+    where $Z_{i, k}$ is the $k$-th coordinate of $Z_i$.
+\qed
+
+\subsection{Lower Bound}
+We now present a detailed proof of the minimax lower bound for the problem of learning to warm-start Lagrangian relaxation. 
+
+\begin{customthm}{\ref{thm:minimax-lower-bound-warm-start} (restated)}
+    For any learning algorithm $\hat{\phi}$ taking input as a set $S$ of $N$ problem instances $P_1, \dots, P_N \sim \cD$, the minimax expected risk is lower-bounded by
+    \[
+        \inf_{\phi} \sup_{\cD \in \Delta(\cP)}\bbE_{S \sim \cD^N}\left[ \bbE_{P \sim \cD}[\| \phi(S) - \pi^*(P)\|_2^2] - \bbE_{P \sim \cD}[\|\phi^* - \pi^*(P)\|_2^2] \right] = \Omega\left(\frac{s}{N}\right). 
+    \]
+\end{customthm}
+\begin{proof}[Proof of Theorem~\ref{thm:minimax-lower-bound-warm-start}]
+    Similar to Theorem \ref{thm:minimax-lower-bound}, our approach is to leverage Fano's method (Theorem \ref{thm:fano}). However, since the loss here is quadratic, the overall proof can be simplified drastically. We proceed with the following steps.
+
+    \textbf{Step 1: Construction of hard instances.} In this construction, we also leverage the idea from the previous case (Theorem \ref{thm:minimax-lower-bound}), by restricting the problem instance to take only the form $P = (c, \mathbf{I}_s, \frac{1}{2}\cdot \mathbf{1}_s, 0_{t \times s}, 0_t)$. From Lemma \ref{lm:lower-bound-step-1}, we show that problem instance $P$ of this form has the property $u(\pi, P) = \sum_{k = 1}^s \min(\frac{\pi_k}{2}, c_k - \frac{\pi_k}{2})$. This function is strictly concave and is maximized uniquely when $\frac{\pi_k}{2} = c_k - \frac{\pi_k}{2}$, if $c_k > 0$ since the Lagrangian multiplier has to be positive. Therefore, for any $c$ such that $c_k \geq 0$ for all $k$, we have $\pi^*(P) = c$.
+
+     \textbf{Step 2: Family of distribution construction.} We define a family of distributions for $c$, parameterized by a binary vector $v \in \{0, 1\}^s$ and a small perturbation scale $\epsilon \in (0, 1/2)$ that we will choose later.
+     \begin{itemize}
+         \item Support: for any $k$, $c_k$ takes value in $\{1, 2\}$.
+         \item Probability: the probabilities are controlled by $v$ and $\epsilon$ as follows
+         \begin{itemize}
+             \item If $v_k = 1$: $\bbP(c_m = 2) = \frac{1 + \epsilon}{2}$ and $\bbP(c_k = 1) = \frac{1 - \epsilon}{2}$.
+             \item If $v_k = 0$: $\bbP(c_k = 2) = \frac{1 + \epsilon}{2}$ and $\bbP(c_k = 1) = \frac{1 + \epsilon}{2}$.
+         \end{itemize}
+     \end{itemize}
+     Then, for a problem distribution $\cD_{v}$ constructed this way, we have $(\phi^*(\cD_v))_k = \bbE[c_k] = \frac{3}{2} + \frac{\epsilon}{2}(2v_k - 1)$
+     
+     \textbf{Step 4: Minimax lower-bound.} From Varshamov-Gilbert bound in Lemma~\ref{lm:Varshamov-Gilbert-bound}, there is a packing set $\cV = \{v^{(1)}, \dots, v^{(M)}\} \subset \{0, 1\}^s$ with $M \geq 2^{s / 8}$ such that $d_H(v^{(i)}, v^{(j)}) \geq s / 8$. Therefore, for any two $v^{(i)}, v^{(j)} \in \cV$, we have 
+     \begin{equation} \label{eq:lower-bound-warm-start-critical-ineq}
+         \|\phi^*(\cD_{v^{(j)}}) - \phi^*(\cD_{v^{(i)}})\|_2^2 = \sum_{k = 1}^s\left(\frac{\epsilon}{2}(2v_k^{(j)}) - 2v_{k}^{(i)})\right)^2 = \epsilon^2 \cdot d_H(v^{(j)}, v^{(i)}) \geq \frac{\epsilon^2 s}{8}.
+     \end{equation}
+
+     Again, we note that the KL divergence for the Bernoulli distributions with parameter $p, q \in [\frac{1 - \epsilon}{2}, \frac{1 + \epsilon}{2}]$ satisfies $\textup{KL}(p \parallel q) \leq \frac{(p - q)^2}{q(1 - q)} \leq 4 \epsilon^2$. Therefore,
+     \[
+        \textup{KL}(\cD_{v^{(i)}}^N \parallel\cD_{v^{(j)}}^N) \leq 4N\sum_{k = 1}^s (p_k^{(j)} - p_k^{(i)})^2 = 4N\epsilon^2 d_H(v^{(i)}, v^{(j)}) \leq 4Ns\epsilon^2.
+     \]
+     We choose $\epsilon$ such that
+     \[
+        4Ns\epsilon^2 \leq \frac{s}{16}\log 2 \Rightarrow \epsilon \asymp \frac{1}{\sqrt{N}}.
+     \]
+     Substituting to~\eqref{eq:lower-bound-warm-start-critical-ineq}, we conclude that 
+     \[
+        \inf_{\phi} \sup_{\cD \in \Delta(\cP)}\bbE_{S \sim \cD^N}\left[ \bbE_{P \sim \cD}[\| \phi(S) - \pi^*(P)\|_2^2] - \bbE_{P \sim \cD}[\|\phi^* - \pi^*(P)\|_2^2] \right] = \Omega\left(\frac{s}{N}\right).
+     \]
+
+     The proof is complete.
+\end{proof}
+
+
+

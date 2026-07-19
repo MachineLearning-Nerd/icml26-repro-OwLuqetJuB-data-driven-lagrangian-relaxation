@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "title": "Repro - Provably Data-driven Lagrangian Relaxation (OwLuqetJuB)",
+  "emoji": "🎯",
+  "space_id": "DineshAI/OwLuqetJuB",
+  "paper": {
+    "openreview_id": "OwLuqetJuB",
+    "arxiv_id": "2605.19052"
+  },
+  "tags": [
+    "icml2026-repro",
+    "paper-OwLuqetJuB"
+  ],
+  "updated_at": "2026-07-19T21:35:47+00:00",
+  "root": {
+    "slug": "index",
+    "title": "Repro - Provably Data-driven Lagrangian Relaxation (OwLuqetJuB)",
+    "file": "pages/index.md",
+    "children": [
+      {
+        "slug": "overview",
+        "title": "Overview",
+        "file": "pages/overview/page.md",
+        "children": []
+      },
+      {
+        "slug": "claim-1-erm-risk",
+        "title": "Claim 1 - ERM risk",
+        "file": "pages/claim-1-erm-risk/page.md",
+        "children": []
+      },
+      {
+        "slug": "claim-2-minimax-lower-bound",
+        "title": "Claim 2 - minimax lower bound",
+        "file": "pages/claim-2-minimax-lower-bound/page.md",
+        "children": []
+      },
+      {
+        "slug": "claim-3-averaged-sga",
+        "title": "Claim 3 - averaged SGA",
+        "file": "pages/claim-3-averaged-sga/page.md",
+        "children": []
+      },
+      {
+        "slug": "claim-4-warm-start",
+        "title": "Claim 4 - warm start",
+        "file": "pages/claim-4-warm-start/page.md",
+        "children": []
+      },
+      {
+        "slug": "claim-5-covering-and-rademacher",
+        "title": "Claim 5 - covering and Rademacher",
+        "file": "pages/claim-5-covering-and-rademacher/page.md",
+        "children": []
+      },
+      {
+        "slug": "claim-6-dual-geometry",
+        "title": "Claim 6 - dual geometry",
+        "file": "pages/claim-6-dual-geometry/page.md",
+        "children": []
+      },
+      {
+        "slug": "methods",
+        "title": "Methods",
+        "file": "pages/methods/page.md",
+        "children": []
+      },
+      {
+        "slug": "negative-controls",
+        "title": "Negative controls",
+        "file": "pages/negative-controls/page.md",
+        "children": []
+      },
+      {
+        "slug": "conclusion",
+        "title": "Conclusion",
+        "file": "pages/conclusion/page.md",
+        "children": []
+      }
+    ]
+  },
+  "agent_view_tokens": 2696,
+  "revision": "1784496947794616615"
+}

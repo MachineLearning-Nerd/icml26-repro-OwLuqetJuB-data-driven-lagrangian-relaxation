@@ -1,0 +1,67 @@
+{
+  "all_claims_complete": true,
+  "claims": [
+    {
+      "claim": "For learned Lagrangian Relaxation multipliers over s coupling constraints and N training samples, the expected excess risk of the ERM solution is upper bounded by O(s^1.5/\u221aN) (Theorem 5.5).",
+      "claim_number": 1,
+      "evidence": "ERM raw trials and an independent risk reconstruction support the O(s^1.5/sqrt(N)) upper envelope; observed N slope is -0.505629.",
+      "verdict": "verified"
+    },
+    {
+      "claim": "A minimax lower bound of \u03a9(s/\u221aN) is proven, showing linear dependence on the number of coupled constraints s is unavoidable for any learning algorithm (Theorem 5.6).",
+      "claim_number": 2,
+      "evidence": "32766 pairwise Hamming checks, exact Bernoulli KL, and positive Fano factors certify an Omega(s/sqrt(N)) hard family.",
+      "verdict": "verified"
+    },
+    {
+      "claim": "Stochastic Gradient Ascent with iterate averaging is shown to achieve the matching O(s/\u221aN) rate, closing the O(\u221as) gap between the ERM upper bound and the minimax lower bound and establishing minimax optimality (Theorem 5.12).",
+      "claim_number": 3,
+      "evidence": "Averaged SGA raw iterates independently reconstruct with N slope -0.497803 and maximum theorem-bound ratio 0.114227.",
+      "verdict": "verified"
+    },
+    {
+      "claim": "The framework is extended to learning-to-warm-start sub-gradient ascent for large-scale Mixed Integer Linear Programming, with an O(s/N) risk upper bound (Theorem 6.1) and matching \u03a9(s/N) minimax lower bound (Theorem 6.2).",
+      "claim_number": 4,
+      "evidence": "Warm-start empirical means match the exact s(1-epsilon^2)/(4N) risk with N slope -1.007167; the malformed appendix probabilities fail, while the complementary repair gives the matching Omega(s/N) Fano family.",
+      "qualification": "Verified after correcting the Appendix Theorem 6.2 v_k=0 probability sign; the literal printed pair sums to 1+epsilon and is not a distribution.",
+      "verdict": "verified"
+    },
+    {
+      "claim": "The covering number of the dual multiplier class U is bounded as log N(\u03b4,U,\u2016\u00b7\u2016\u2082,N) \u2264 s\u00b7log(1+2B\u03c0_max s/\u03b4), used to derive the Rademacher complexity bound R_N(U)=O(s^1.5/\u221aN) (Lemma 5.3, Lemma 5.4).",
+      "claim_number": 5,
+      "evidence": "The covering formula is exact on all grid cells; independent dense integration reproduces the Dudley constant 5.662939536639 and the s^1.5/sqrt(N) scaling.",
+      "verdict": "verified"
+    },
+    {
+      "claim": "The dual function u(\u03c0,P) is shown to be concave in \u03c0 with subgradient norm bounded by 2B\u221as under bounded constraint-violation assumptions on the MILP instance (Proposition 5.1, Section 4).",
+      "claim_number": 6,
+      "evidence": "3000 producer and 2500 independent finite-MILP trials verify concavity, the supergradient inequality, and 2B sqrt(s); wrong-gradient, max-affine, and omitted-sqrt(s) controls fail.",
+      "qualification": "The paper calls the concave supergradient a subgradient; the reproduction follows its stated convention.",
+      "verdict": "verified"
+    }
+  ],
+  "live_claim_count": 6,
+  "metrics": {
+    "erm_n_slope": -0.5056292231329746,
+    "independent_geometry": {
+      "max_control_failures": 1155,
+      "max_norm_ratio": 0.7034745386687321,
+      "min_concavity_margin": -1.7763568394002505e-15,
+      "min_supergradient_margin": -1.7763568394002505e-15,
+      "trials": 2500,
+      "wrong_gradient_failures": 1268
+    },
+    "max_sga_bound_ratio": 0.11422749804332853,
+    "max_warm_exact_relative_error": 0.020945720995465638,
+    "min_fano_error": 0.2737854175886105,
+    "packing_pairs": 32766,
+    "producer_geometry_trials": 3000,
+    "rademacher_normalized_constant": 5.662939536639223,
+    "sga_n_slope": -0.4978030069946627,
+    "source_pins": true,
+    "warm_n_slope": -1.0071673350203592
+  },
+  "paper_id": "OwLuqetJuB",
+  "possible_points": 12,
+  "substantive_outcomes": 6
+}
